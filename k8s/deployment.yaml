@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-like-pod
+spec:
+  selector:
+    matchLabels:
+      app: redisLike
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redisLike
+    spec:
+      containers:
+        - name: redis-like-pod
+          image: coderdockercoder/redis-like-image:1.0.0
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-like-service
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 6379
+      targetPort: 6379
+      nodePort: 32379
+  selector:
+    app: redisLike
+
