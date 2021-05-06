@@ -1,6 +1,7 @@
 package protocol
 
 import (
+	"context"
 	"strconv"
 )
 
@@ -21,7 +22,7 @@ type SetCmd struct {
 }
 
 func (c *SetCmd) Deal() []byte {
-	err := c.db.Put(c.key, c.value, nil)
+	err := c.storage.Set(context.Background(), c.key, c.value)
 	if err == nil {
 		return OK
 	} else {
