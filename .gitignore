@@ -1,3 +1,9 @@
 /vendor-t
 /vendor
 /redis_like
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/redis-like.iml
+/.idea/vcs.xml
