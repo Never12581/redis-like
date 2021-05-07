@@ -16,38 +16,38 @@ import (
 	"time"
 )
 
-type example struct {
+type RedisExample struct {
 	storage storage.Storage
 }
 
-func (s *example) OnConnect(c *connection.Connection) {
+func (s *RedisExample) OnConnect(c *connection.Connection) {
 }
 
-func (s *example) OnMessage(c *connection.Connection, ctx interface{}, data []byte) (out []byte) {
+func (s *RedisExample) OnMessage(c *connection.Connection, ctx interface{}, data []byte) (out []byte) {
 	d := time.Now().Add(1000 * time.Millisecond)
 	cctx, closeFunc := context.WithDeadline(context.Background(), d)
 	defer closeFunc()
-	dealCmd, bs := protocol.RespProtocolAnalysis(cctx, data)
+	dealCmd, bs := protocol.RespProtocolAnalysis(cctx, s.storage, data)
 	if len(bs) != 0 {
 		out = bs
 		return
 	}
-	out = dealCmd.Deal(s.storage)
+	out = dealCmd.Deal()
 	return
 }
 
-func (s *example) OnClose(c *connection.Connection) {
+func (s *RedisExample) OnClose(c *connection.Connection) {
 	log.Println("OnClose ：", c.PeerAddr())
 	log.Println("============")
 }
 
-func (s *example) UnPacket(c *connection.Connection, buffer *ringbuffer.RingBuffer) (interface{}, []byte) {
+func (s *RedisExample) UnPacket(c *connection.Connection, buffer *ringbuffer.RingBuffer) (interface{}, []byte) {
 	ret := buffer.Bytes()
 	buffer.RetrieveAll()
 	return nil, ret
 }
 
-func (s *example) Packet(c *connection.Connection, data []byte) []byte {
+func (s *RedisExample) Packet(c *connection.Connection, data []byte) []byte {
 	return append(data, []byte("\r\n")...)
 }
 
@@ -58,13 +58,13 @@ func main() {
 	//	panic(err)
 	//}
 
-	//handler := &example{storage: levelDB.NewLevelDB(DB)}
+	//handler := &RedisExample{storage: levelDB.NewLevelDB(DB)}
 
 	cacheSize := 100 * 1024 * 1024
 	cache := freecache.NewCache(cacheSize)
 	debug.SetGCPercent(20)
 
-	handler := &example{storage: freeCache.NewFreeCache(cache)}
+	handler := &RedisExample{storage: freeCache.NewFreeCache(cache)}
 
 	var port int
 	var loops int

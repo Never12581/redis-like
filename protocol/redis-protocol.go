@@ -6,10 +6,15 @@ import (
 
 type CmdDeal struct {
 	cf CmdFunc
+	db storage.Storage
 }
 
-func (cd CmdDeal) Deal(db storage.Storage) []byte {
-	cd.cf.setDB(db)
+func NewCmdDeal(cf CmdFunc, db storage.Storage) *CmdDeal {
+	return &CmdDeal{cf: cf, db: db}
+}
+
+func (cd CmdDeal) Deal() []byte {
+	cd.cf.setDB(cd.db)
 	cd.cf.paramInit()
 	return cd.cf.Deal()
 }

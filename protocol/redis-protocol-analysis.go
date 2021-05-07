@@ -3,6 +3,7 @@ package protocol
 import (
 	"context"
 	"github.com/Allenxuxu/gev/log"
+	"redis-like/storage"
 	"strconv"
 )
 
@@ -21,7 +22,7 @@ var (
 
 // resp 协议解析
 // Cmd：解析出的命令，[]byte：如果解析失败返回的值
-func RespProtocolAnalysis(ctx context.Context, bs []byte) (*CmdDeal, []byte) {
+func RespProtocolAnalysis(ctx context.Context, db storage.Storage, bs []byte) (*CmdDeal, []byte) {
 	cmd, bs := commonRespProtocolAnalysis(bs)
 	if len(bs) != 0 {
 		return EmptyCmdDeal, bs
@@ -30,7 +31,7 @@ func RespProtocolAnalysis(ctx context.Context, bs []byte) (*CmdDeal, []byte) {
 	operatorType := string(cmd.ParamBs[0])
 	// note : 将初始化方式由 if else 或者 switch case 转化为 map 形式
 	// 			降低 时间复杂度
-	return &CmdDeal{cf: GetCmdInitFunc(operatorType)(cmd)}, nil
+	return NewCmdDeal(GetCmdInitFunc(operatorType)(cmd), db), nil
 }
 
 // 通用解析 ---> 解析为 [][]byte
