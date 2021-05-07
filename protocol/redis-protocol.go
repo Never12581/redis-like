@@ -1,12 +1,14 @@
 package protocol
 
-import "github.com/syndtr/goleveldb/leveldb"
+import (
+	"redis-like/storage"
+)
 
 type CmdDeal struct {
 	cf CmdFunc
 }
 
-func (cd CmdDeal) Deal(db *leveldb.DB) []byte {
+func (cd CmdDeal) Deal(db storage.Storage) []byte {
 	cd.cf.setDB(db)
 	cd.cf.paramInit()
 	return cd.cf.Deal()
@@ -14,7 +16,7 @@ func (cd CmdDeal) Deal(db *leveldb.DB) []byte {
 
 type CmdFunc interface {
 	Deal() []byte
-	setDB(*leveldb.DB)
+	setDB(storage.Storage)
 	paramInit()
 }
 
@@ -22,15 +24,15 @@ type CmdFunc interface {
 // default deal
 type Cmd struct {
 	ParamBs [][]byte // 参数值 如：ex 200
-	db      *leveldb.DB
+	storage storage.Storage
 }
 
 func (c *Cmd) Deal() []byte {
 	return UnsupportedErr
 }
 
-func (c *Cmd) setDB(db *leveldb.DB) {
-	c.db = db
+func (c *Cmd) setDB(db storage.Storage) {
+	c.storage = db
 }
 
 func (c *Cmd) paramInit() {

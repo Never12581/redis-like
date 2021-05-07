@@ -1,12 +1,14 @@
 package protocol
 
+import "context"
+
 type DelCmd struct {
 	*Cmd
 	key []byte
 }
 
 func (c *DelCmd) Deal() []byte {
-	err := c.db.Delete(c.key, nil)
+	err := c.storage.Del(context.Background(), c.key)
 	if err != nil {
 		return CommonErr
 	} else {

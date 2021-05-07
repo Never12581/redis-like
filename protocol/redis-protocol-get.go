@@ -1,6 +1,7 @@
 package protocol
 
 import (
+	"context"
 	"github.com/google/martian/log"
 	levelErr "github.com/syndtr/goleveldb/leveldb/errors"
 )
@@ -11,7 +12,7 @@ type GetCmd struct {
 }
 
 func (c *GetCmd) Deal() []byte {
-	val, err := c.db.Get(c.key, nil)
+	val, err := c.storage.Get(context.Background(), c.key)
 
 	if err == nil {
 		out := []byte("+")

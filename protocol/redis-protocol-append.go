@@ -1,5 +1,7 @@
 package protocol
 
+import "context"
+
 type AppendCmd struct {
 	*Cmd
 	key []byte
@@ -7,11 +9,7 @@ type AppendCmd struct {
 }
 
 func (c *AppendCmd) Deal() []byte {
-	sourceVal, err := c.db.Get(c.key, nil)
-	if err != nil {
-		return CommonErr
-	}
-	err = c.db.Put(c.key, append(sourceVal, c.val...), nil)
+	err := c.storage.Append(context.Background(), c.key, c.val)
 
 	if err == nil {
 		out := OK

@@ -6,15 +6,18 @@ import (
 	"github.com/Allenxuxu/gev"
 	"github.com/Allenxuxu/gev/connection"
 	"github.com/Allenxuxu/ringbuffer"
-	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/coocood/freecache"
 	"log"
 	"redis-like/protocol"
+	"redis-like/storage"
+	"redis-like/storage/freeCache"
+	"runtime/debug"
 	"strconv"
 	"time"
 )
 
 type example struct {
-	DB *leveldb.DB
+	storage storage.Storage
 }
 
 func (s *example) OnConnect(c *connection.Connection) {
@@ -29,7 +32,7 @@ func (s *example) OnMessage(c *connection.Connection, ctx interface{}, data []by
 		out = bs
 		return
 	}
-	out = dealCmd.Deal(s.DB)
+	out = dealCmd.Deal(s.storage)
 	return
 }
 
@@ -49,12 +52,19 @@ func (s *example) Packet(c *connection.Connection, data []byte) []byte {
 }
 
 func main() {
-	DB, err := leveldb.OpenFile("redis_like", nil)
-	if err != nil {
-		log.Println(err)
-		panic(err)
-	}
-	handler := &example{DB: DB}
+	//DB, err := leveldb.OpenFile("redis_like", nil)
+	//if err != nil {
+	//	log.Println(err)
+	//	panic(err)
+	//}
+
+	//handler := &example{storage: levelDB.NewLevelDB(DB)}
+
+	cacheSize := 100 * 1024 * 1024
+	cache := freecache.NewCache(cacheSize)
+	debug.SetGCPercent(20)
+
+	handler := &example{storage: freeCache.NewFreeCache(cache)}
 
 	var port int
 	var loops int
