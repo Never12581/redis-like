@@ -19,4 +19,5 @@ type Storage interface {
 	Append(context context.Context, key []byte, value []byte) error
 	Get(context context.Context, key []byte) ([]byte, error)
 	Set(context context.Context, key []byte, value []byte) error
+	Close()
 }

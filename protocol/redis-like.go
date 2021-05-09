@@ -46,7 +46,7 @@ func (s *RedisExample) Packet(c *connection.Connection, data []byte) []byte {
 	return append(data, []byte("\r\n")...)
 }
 
-func Start() {
+func Start() (server *gev.Server) {
 
 	handler := &RedisExample{}
 
@@ -68,5 +68,6 @@ func Start() {
 		panic(err)
 	}
 
-	s.Start()
+	go s.Start()
+	return s
 }

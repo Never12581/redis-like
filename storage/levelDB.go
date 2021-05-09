@@ -51,6 +51,10 @@ func (l *LevelDB) Set(context context.Context, key []byte, value []byte) error {
 	return nil
 }
 
+func (l *LevelDB) Close() {
+	l.db.Close()
+}
+
 func newLevelDBError(text ErrorInfo, err error) error {
 	return NewError(text, config.LevelDBEngine, err)
 }

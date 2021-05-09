@@ -10,7 +10,7 @@ import (
 
 func Test_file_fd(t *testing.T) {
 
-	file, err := os.Open("/Users/huangbocai/go/src/t-redis-like/Makefile")
+	file, err := os.Open("Makefile")
 	if err != nil {
 		panic(err)
 	}

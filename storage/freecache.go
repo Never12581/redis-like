@@ -52,6 +52,10 @@ func (f *FreeCache) Set(context context.Context, key []byte, value []byte) error
 	return nil
 }
 
+func (f *FreeCache) Close() {
+	// 数据关闭，一般可以在这里做些持久化的策略
+}
+
 func newFreeCacheError(text ErrorInfo, err error) error {
 	return NewError(text, config.FreeCacheEngine, err)
 }
