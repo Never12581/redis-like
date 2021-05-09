@@ -1,4 +1,4 @@
-package protocol
+package analysis
 
 import (
 	"redis-like/storage"
@@ -9,8 +9,8 @@ type CmdDeal struct {
 	db storage.Storage
 }
 
-func NewCmdDeal(cf CmdFunc, db storage.Storage) *CmdDeal {
-	return &CmdDeal{cf: cf, db: db}
+func NewCmdDeal(cf CmdFunc) *CmdDeal {
+	return &CmdDeal{cf: cf, db: storage.StorageInstance()}
 }
 
 func (cd CmdDeal) Deal() []byte {

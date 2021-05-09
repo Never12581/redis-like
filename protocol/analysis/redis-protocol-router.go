@@ -1,4 +1,4 @@
-package protocol
+package analysis
 
 var routeInfo map[string]initFunc
 

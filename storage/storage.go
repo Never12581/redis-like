@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"fmt"
 )
 
 type ErrorInfo string
@@ -20,12 +19,4 @@ type Storage interface {
 	Append(context context.Context, key []byte, value []byte) error
 	Get(context context.Context, key []byte) ([]byte, error)
 	Set(context context.Context, key []byte, value []byte) error
-}
-
-func NewError(text ErrorInfo, engine string, err error) error {
-	var errorInfo string
-	if err != nil {
-		errorInfo = err.Error()
-	}
-	return fmt.Errorf(string(text), engine, errorInfo)
 }
