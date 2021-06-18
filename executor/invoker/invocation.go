@@ -1,10 +1,11 @@
-package executor
+package invoker
 
 import (
 	"context"
+	"use-demo/frame/result"
 )
 
-type CallBackFunc func(ctx context.Context, invocation InvocationInter, inter ResultInter)
+type CallBackFunc func(ctx context.Context, invocation InvocationInter, inter result.ResultInter)
 
 type InvocationInter interface {
 	GetAttachments() map[string]interface{}
@@ -12,7 +13,7 @@ type InvocationInter interface {
 	GetAttachmentOrDefaultValue(key string, defaultValue interface{}) interface{}
 	PutAttachment(key string, value interface{})
 	AddCallbacks(backFunc CallBackFunc)
-	OnFinished(ctx context.Context, inter ResultInter)
+	OnFinished(ctx context.Context, inter result.ResultInter)
 }
 
 type Invocation struct {
@@ -20,11 +21,14 @@ type Invocation struct {
 	attachments map[string]interface{}
 }
 
-func (ic *Invocation) OnFinished(ctx context.Context, inter ResultInter) {
+func (ic *Invocation) OnFinished(ctx context.Context, inter result.ResultInter) {
 	for {
 		if callback, ok := <-ic.callbacks; ok {
-			callback(ctx, ic, inter)
+			if callback != nil {
+				callback(ctx, ic, inter)
+			}
 		} else {
+			close(ic.callbacks)
 			break
 		}
 	}
