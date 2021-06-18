@@ -25,6 +25,7 @@ func (ic *Invocation) OnFinished(ctx context.Context, inter ResultInter) {
 		if callback, ok := <-ic.callbacks; ok {
 			callback(ctx, ic, inter)
 		} else {
+			close(ic.callbacks)
 			break
 		}
 	}
