@@ -13,11 +13,11 @@ type SimpleExecutor struct {
 func (s *SimpleExecutor) Execute(ctx context.Context, invocation InvocationInter) (interface{}, error) {
 	invoker := s.invoker
 	var result ResultInter
-	flag := true
-	for flag ||
-		(!result.Success() && invoker.hasNext()) {
-		flag = false
+	for {
 		result = invoker.Invoke(ctx, invocation)
+		if result.Success() || !invoker.hasNext() {
+			break
+		}
 		invocation.AddCallbacks(invoker.Callback())
 		invoker = invoker.next()
 	}
