@@ -16,7 +16,7 @@
 - [ ] 理解reactor网络模型
 - [ ] 理解分布式共识算法
 - [ ] 理解并写出类levelDB的存储引擎（基于levelDB的思想，自己实现）
-- [x] resp 协议规范与解析
+- [x] resp 协议规范与解析 [redis的resp解析](https://redis.io/topics/protocol)
 
 ## 目标
 完成一个单体kv存储。
