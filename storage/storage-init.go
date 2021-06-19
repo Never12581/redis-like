@@ -24,9 +24,7 @@ func NewError(text ErrorInfo, engine string, err error) error {
 }
 
 func StorageInstance() Storage {
-	if storage == nil {
-		once.Do(newStorage)
-	}
+	once.Do(newStorage)
 	return storage
 }
 

@@ -3,8 +3,9 @@ package invoker
 import (
 	"context"
 	"fmt"
+	"redis-like/executor/result"
 	"strconv"
-	"use-demo/frame/result"
+	"sync"
 )
 
 const (
@@ -12,9 +13,21 @@ const (
 	paramsAnalysisError = "source params analysis error！"
 )
 
+var (
+	protocolInvoker *ProtocolInvoker
+	protocolOnce    sync.Once
+)
+
 // ProtocolInvoker 协议处理invoker
 type ProtocolInvoker struct {
 	nextInvoker InvokerInter
+}
+
+func ProtocolInvokerInstance() *ProtocolInvoker {
+	protocolOnce.Do(func() {
+		protocolInvoker = &ProtocolInvoker{}
+	})
+	return protocolInvoker
 }
 
 func (p *ProtocolInvoker) SetNext(inter InvokerInter) {
@@ -26,7 +39,7 @@ func (p *ProtocolInvoker) Invoke(ctx context.Context, invocation InvocationInter
 	var r result.ResultInter
 	if ok {
 		bss, err := commonRespProtocolAnalysis(bs)
-		if err != nil {
+		if err == nil {
 			invocation.PutAttachment(ExecuteMethod, string(bss[0]))
 			invocation.PutAttachment(AnalysisParams, bss[1:])
 			r = result.SuccessResult(nil)

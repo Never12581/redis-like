@@ -2,7 +2,7 @@ package invoker
 
 import (
 	"context"
-	"use-demo/frame/result"
+	"redis-like/executor/result"
 )
 
 const (

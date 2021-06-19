@@ -3,13 +3,25 @@ package invoker
 import (
 	"context"
 	"log"
-	"use-demo/frame/result"
+	"redis-like/executor/result"
+	"sync"
+)
+
+var (
+	simpleInvoker *SimpleInvoker
+	simpleOnce    sync.Once
 )
 
 // SimpleInvoker 简单demo
 type SimpleInvoker struct {
 	nextInvoker InvokerInter
-	callback    CallBackFunc
+}
+
+func SimpleInvokerInstance() *SimpleInvoker {
+	simpleOnce.Do(func() {
+		simpleInvoker = &SimpleInvoker{}
+	})
+	return simpleInvoker
 }
 
 func (i *SimpleInvoker) SetNext(inter InvokerInter) {
@@ -18,7 +30,7 @@ func (i *SimpleInvoker) SetNext(inter InvokerInter) {
 
 func (i *SimpleInvoker) Invoke(ctx context.Context, invocation InvocationInter) result.ResultInter {
 	log.Println("simple invoke start!")
-	return result.DefaultResult()
+	return result.DefaultSuccessResult()
 }
 
 func (i *SimpleInvoker) Callback() CallBackFunc {

@@ -7,7 +7,8 @@ import (
 	"github.com/Allenxuxu/gev/connection"
 	"github.com/Allenxuxu/ringbuffer"
 	"log"
-	"redis-like/protocol/analysis"
+	"redis-like/executor/executor"
+	"redis-like/executor/invoker"
 	"strconv"
 	"time"
 )
@@ -22,13 +23,12 @@ func (s *RedisExample) OnMessage(c *connection.Connection, ctx interface{}, data
 	d := time.Now().Add(1000 * time.Millisecond)
 	cctx, closeFunc := context.WithDeadline(context.Background(), d)
 	defer closeFunc()
-	dealCmd, bs := analysis.RespProtocolAnalysis(cctx, data)
-	if len(bs) != 0 {
-		out = bs
-		return
-	}
-	out = dealCmd.Deal()
-	return
+	e := executor.ExecutorInstance()
+
+	invocation := invoker.NewInvocation()
+	invocation.PutAttachment(invoker.RequestParams, data)
+
+	return e.Execute(cctx, invocation)
 }
 
 func (s *RedisExample) OnClose(c *connection.Connection) {

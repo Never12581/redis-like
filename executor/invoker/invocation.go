@@ -2,7 +2,7 @@ package invoker
 
 import (
 	"context"
-	"use-demo/frame/result"
+	"redis-like/executor/result"
 )
 
 type CallBackFunc func(ctx context.Context, invocation InvocationInter, inter result.ResultInter)
@@ -21,7 +21,18 @@ type Invocation struct {
 	attachments map[string]interface{}
 }
 
+func NewInvocation() *Invocation {
+	i := &Invocation{}
+	i.attachments = make(map[string]interface{}, 0)
+	i.callbacks = make(chan CallBackFunc)
+	return i
+}
+
 func (ic *Invocation) OnFinished(ctx context.Context, inter result.ResultInter) {
+	if len(ic.callbacks) == 0 {
+		close(ic.callbacks)
+		return
+	}
 	for {
 		if callback, ok := <-ic.callbacks; ok {
 			if callback != nil {

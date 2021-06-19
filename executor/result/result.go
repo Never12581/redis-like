@@ -35,6 +35,12 @@ func (r *Result) HasError() bool {
 	return r.error == nil
 }
 
+func DefaultSuccessResult() ResultInter {
+	r := new(Result)
+	r.success = true
+	return r
+}
+
 // DefaultResult 默认返回
 func DefaultResult() ResultInter {
 	r := new(Result)
@@ -51,6 +57,7 @@ func ErrorResult(err error) ResultInter {
 	return r
 }
 
+// SuccessResult 正确返回
 func SuccessResult(result interface{}) ResultInter {
 	r := new(Result)
 	r.success = true
