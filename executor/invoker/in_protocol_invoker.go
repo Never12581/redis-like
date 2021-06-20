@@ -14,27 +14,27 @@ const (
 )
 
 var (
-	protocolInvoker *ProtocolInvoker
+	protocolInvoker *InProtocolInvoker
 	protocolOnce    sync.Once
 )
 
-// ProtocolInvoker 协议处理invoker
-type ProtocolInvoker struct {
+// InProtocolInvoker 协议处理invoker
+type InProtocolInvoker struct {
 	nextInvoker InvokerInter
 }
 
-func ProtocolInvokerInstance() *ProtocolInvoker {
+func ProtocolInvokerInstance() *InProtocolInvoker {
 	protocolOnce.Do(func() {
-		protocolInvoker = &ProtocolInvoker{}
+		protocolInvoker = &InProtocolInvoker{}
 	})
 	return protocolInvoker
 }
 
-func (p *ProtocolInvoker) SetNext(inter InvokerInter) {
+func (p *InProtocolInvoker) SetNext(inter InvokerInter) {
 	p.nextInvoker = inter
 }
 
-func (p *ProtocolInvoker) Invoke(ctx context.Context, invocation InvocationInter) result.ResultInter {
+func (p *InProtocolInvoker) Invoke(ctx context.Context, invocation InvocationInter) result.ResultInter {
 	bs, ok := invocation.GetAttachment(RequestParams).([]byte)
 	var r result.ResultInter
 	if ok {
@@ -52,15 +52,15 @@ func (p *ProtocolInvoker) Invoke(ctx context.Context, invocation InvocationInter
 	return r
 }
 
-func (p *ProtocolInvoker) Callback() CallBackFunc {
+func (p *InProtocolInvoker) Callback() CallBackFunc {
 	return nil
 }
 
-func (s *ProtocolInvoker) HasNext() bool {
+func (s *InProtocolInvoker) HasNext() bool {
 	return s.nextInvoker != nil
 }
 
-func (s *ProtocolInvoker) Next() InvokerInter {
+func (s *InProtocolInvoker) Next() InvokerInter {
 	return s.nextInvoker
 }
 
