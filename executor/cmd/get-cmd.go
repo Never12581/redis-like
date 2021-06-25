@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"redis-like/executor"
 	"redis-like/storage"
 )
 
@@ -22,6 +23,6 @@ func (g *GetCmd) Deal(ctx context.Context) []byte {
 		out = append(out, bs...)
 		return out
 	} else {
-		return NotFoundErr
+		return executor.NotFoundErr
 	}
 }

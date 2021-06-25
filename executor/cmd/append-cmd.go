@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"redis-like/executor"
 	"redis-like/storage"
 )
 
@@ -20,9 +21,9 @@ func (a *AppendCmd) Deal(ctx context.Context) []byte {
 	storage := storage.StorageInstance()
 	err := storage.Append(context.Background(), a.key, a.val)
 	if err == nil {
-		out := OK
+		out := executor.OK
 		return out
 	} else {
-		return CommonErr
+		return executor.CommonErr
 	}
 }

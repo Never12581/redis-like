@@ -7,7 +7,7 @@ import (
 	"github.com/Allenxuxu/gev/connection"
 	"github.com/Allenxuxu/ringbuffer"
 	"log"
-	"redis-like/executor/executor"
+	"redis-like/executor/execute"
 	"redis-like/executor/invoker"
 	"strconv"
 	"time"
@@ -23,7 +23,7 @@ func (s *RedisExample) OnMessage(c *connection.Connection, ctx interface{}, data
 	d := time.Now().Add(1000 * time.Millisecond)
 	cctx, closeFunc := context.WithDeadline(context.Background(), d)
 	defer closeFunc()
-	e := executor.ExecutorInstance()
+	e := execute.ExecutorInstance()
 
 	invocation := invoker.NewInvocation()
 	invocation.PutAttachment(invoker.RequestParams, data)

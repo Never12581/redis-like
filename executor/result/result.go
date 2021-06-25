@@ -1,21 +1,20 @@
 package result
 
-import "fmt"
-
-const (
-	NoResultError = "no result error."
+import (
+	"fmt"
+	"redis-like/executor"
 )
 
 type ResultInter interface {
 	Success() bool
-	Result() interface{}
+	Result() []byte
 	Error() error
 	HasError() bool
 }
 
 type Result struct {
 	success bool
-	result  interface{}
+	result  []byte
 	error   error
 }
 
@@ -23,7 +22,7 @@ func (r *Result) Success() bool {
 	return r.success
 }
 
-func (r *Result) Result() interface{} {
+func (r *Result) Result() []byte {
 	return r.result
 }
 
@@ -45,7 +44,7 @@ func DefaultSuccessResult() ResultInter {
 func DefaultResult() ResultInter {
 	r := new(Result)
 	r.success = false
-	r.error = fmt.Errorf(NoResultError)
+	r.error = fmt.Errorf(executor.NoResultError)
 	return r
 }
 
@@ -58,7 +57,7 @@ func ErrorResult(err error) ResultInter {
 }
 
 // SuccessResult 正确返回
-func SuccessResult(result interface{}) ResultInter {
+func SuccessResult(result []byte) ResultInter {
 	r := new(Result)
 	r.success = true
 	r.result = result

@@ -1,11 +1,12 @@
-package executor
+package execute
 
 import (
 	"context"
 	"github.com/google/martian/log"
-	"redis-like/executor/cmd"
+	executor2 "redis-like/executor"
 	"redis-like/executor/invoker"
 	"redis-like/executor/result"
+
 	"sync"
 )
 
@@ -17,13 +18,11 @@ var (
 func ExecutorInstance() Executor {
 	executorOnce.Do(func() {
 		executor = &SimpleExecutor{}
-		simpleInvoker := invoker.SimpleInvokerInstance()
 		protocolInvoker := invoker.ProtocolInvokerInstance()
 		storageInvoker := invoker.StorageInvokerInstance()
 
-		simpleInvoker.SetNext(protocolInvoker)
 		protocolInvoker.SetNext(storageInvoker)
-		executor.SetInvoker(simpleInvoker)
+		executor.SetInvoker(protocolInvoker)
 	})
 
 	return executor
@@ -57,10 +56,8 @@ func (s *SimpleExecutor) Execute(ctx context.Context, invocation invoker.Invocat
 	}
 	if r.Success() {
 		invocation.OnFinished(ctx, r)
-		if bs, ok := r.Result().([]byte); ok {
-			return bs
-		}
+		return r.Result()
 	}
 	log.Errorf("%v", r.Error())
-	return cmd.CommonErr
+	return executor2.CommonErr
 }

@@ -3,14 +3,10 @@ package invoker
 import (
 	"context"
 	"fmt"
+	"redis-like/executor"
 	"redis-like/executor/result"
 	"strconv"
 	"sync"
-)
-
-const (
-	paramsGetError      = "source params get error!"
-	paramsAnalysisError = "source params analysis error！"
 )
 
 var (
@@ -47,7 +43,7 @@ func (p *InProtocolInvoker) Invoke(ctx context.Context, invocation InvocationInt
 			r = result.ErrorResult(err)
 		}
 	} else {
-		r = result.ErrorResult(fmt.Errorf(paramsGetError))
+		r = result.ErrorResult(fmt.Errorf(executor.ParamsGetError))
 	}
 	return r
 }
@@ -69,7 +65,7 @@ func commonRespProtocolAnalysis(bs []byte) ([][]byte, error) {
 	bsLength := len(bs)
 	firstR := findFirstR(bs, 0, bsLength)
 	if firstR == -1 {
-		return nil, fmt.Errorf(paramsAnalysisError)
+		return nil, fmt.Errorf(executor.ParamsAnalysisError)
 	}
 	// 本次数组中参数长度
 	paramLength, err := strconv.Atoi(string(bs[1:firstR]))
@@ -83,7 +79,7 @@ func commonRespProtocolAnalysis(bs []byte) ([][]byte, error) {
 	for i := 0; i < paramLength; i++ {
 		bbs, nextOffset := analysisParamAndNextOffset(bs, tempStart, tempEnd)
 		if nextOffset == -1 {
-			return nil, fmt.Errorf(paramsAnalysisError)
+			return nil, fmt.Errorf(executor.ParamsAnalysisError)
 		}
 		tempStart = nextOffset
 		paramContents[i] = bbs

@@ -2,21 +2,7 @@ package cmd
 
 import (
 	"context"
-	"errors"
-)
-
-var (
-	RequestErr      = []byte("-CommonErr request .")
-	RequestStartErr = []byte("-CommonErr request not start with * .")
-	Pong            = []byte("+Pong")
-	OK              = []byte("+OK")
-	CommonErr       = []byte("-cannot deal error .")
-	UnsupportedErr  = []byte("-the func unsupported .")
-	NotFoundErr     = []byte("-the key not found .")
-)
-
-var (
-	UnsupportedCommandErr = errors.New("unsupported commond error")
+	"redis-like/executor"
 )
 
 type Cmd interface {
@@ -60,7 +46,7 @@ func pingCmdInit() Cmd {
 func GeneratorCmd(executeMethod string, analysisParams [][]byte) (Cmd, error) {
 	fn := routeInfo[executeMethod]
 	if fn == nil {
-		return nil, UnsupportedCommandErr
+		return nil, executor.UnsupportedCommandErr
 	}
 	c := fn()
 	err := c.Init(analysisParams)
