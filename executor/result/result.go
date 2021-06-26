@@ -63,3 +63,9 @@ func SuccessResult(result []byte) ResultInter {
 	r.result = result
 	return r
 }
+
+func SuccessWithoutResult() ResultInter {
+	r := new(Result)
+	r.success = true
+	return r
+}

@@ -38,7 +38,7 @@ func (p *InProtocolInvoker) Invoke(ctx context.Context, invocation InvocationInt
 		if err == nil {
 			invocation.PutAttachment(ExecuteMethod, string(bss[0]))
 			invocation.PutAttachment(AnalysisParams, bss[1:])
-			r = result.SuccessResult(nil)
+			r = result.SuccessWithoutResult()
 		} else {
 			r = result.ErrorResult(err)
 		}

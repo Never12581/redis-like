@@ -36,6 +36,7 @@ func (s *StorageInvoker) Invoke(ctx context.Context, invocation InvocationInter)
 		return result.ErrorResult(err)
 	}
 	bs := c.Deal(ctx)
+	invocation.PutAttachment(SourceResult, bs)
 	return result.SuccessResult(bs)
 }
 
