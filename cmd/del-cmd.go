@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"redis-like/executor"
+	"redis-like/constant"
 	"redis-like/storage"
 )
 
@@ -19,8 +19,8 @@ func (d *DelCmd) Deal(ctx context.Context) []byte {
 	storage := storage.StorageInstance()
 	err := storage.Del(context.Background(), d.key)
 	if err != nil {
-		return executor.CommonErr
+		return constant.CommonErr
 	} else {
-		return executor.OK
+		return constant.OK
 	}
 }

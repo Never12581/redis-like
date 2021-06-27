@@ -1,10 +1,5 @@
 package result
 
-import (
-	"fmt"
-	"redis-like/executor"
-)
-
 type ResultInter interface {
 	Success() bool
 	Result() []byte
@@ -32,20 +27,6 @@ func (r *Result) Error() error {
 
 func (r *Result) HasError() bool {
 	return r.error == nil
-}
-
-func DefaultSuccessResult() ResultInter {
-	r := new(Result)
-	r.success = true
-	return r
-}
-
-// DefaultResult 默认返回
-func DefaultResult() ResultInter {
-	r := new(Result)
-	r.success = false
-	r.error = fmt.Errorf(executor.NoResultError)
-	return r
 }
 
 // ErrorResult 默认错误返回

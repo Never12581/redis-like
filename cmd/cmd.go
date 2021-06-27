@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"redis-like/executor"
+	"redis-like/constant"
 )
 
 type Cmd interface {
@@ -46,7 +46,7 @@ func pingCmdInit() Cmd {
 func GeneratorCmd(executeMethod string, analysisParams [][]byte) (Cmd, error) {
 	fn := routeInfo[executeMethod]
 	if fn == nil {
-		return nil, executor.UnsupportedCommandErr
+		return nil, constant.UnsupportedCommandErr
 	}
 	c := fn()
 	err := c.Init(analysisParams)

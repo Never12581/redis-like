@@ -14,6 +14,8 @@ const (
 	ExecuteMethod = "executeMethod"
 	// 原始返回值
 	SourceResult = "sourceResult"
+	// 执行方法对象
+	ExecuteCmd = "executeCmd"
 )
 
 type InvokerInter interface {

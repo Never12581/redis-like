@@ -3,7 +3,7 @@ package execute
 import (
 	"context"
 	"github.com/google/martian/log"
-	executor2 "redis-like/executor"
+	"redis-like/constant"
 	"redis-like/executor/invoker"
 	"redis-like/executor/result"
 
@@ -59,5 +59,5 @@ func (s *SimpleExecutor) Execute(ctx context.Context, invocation invoker.Invocat
 		return r.Result()
 	}
 	log.Errorf("%v", r.Error())
-	return executor2.CommonErr
+	return constant.CommonErr
 }

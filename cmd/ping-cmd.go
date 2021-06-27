@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"redis-like/executor"
+	"redis-like/constant"
 )
 
 type PingCmd struct {
@@ -13,5 +13,5 @@ func (p *PingCmd) Init(bs [][]byte) error {
 }
 
 func (p *PingCmd) Deal(ctx context.Context) []byte {
-	return executor.Pong
+	return constant.Pong
 }

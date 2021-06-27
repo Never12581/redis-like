@@ -3,10 +3,27 @@ package invoker
 import (
 	"context"
 	"redis-like/executor/result"
+	"redis-like/protocol"
+	"sync"
+)
+
+var (
+	outProtocolInvoker *OutProtocolInvoker
+	outProtocolOnce    sync.Once
 )
 
 type OutProtocolInvoker struct {
 	nextInvoker InvokerInter
+	resp        *protocol.RespProtocol
+}
+
+func OutProtocolInvokerInstance() *OutProtocolInvoker {
+	outProtocolOnce.Do(func() {
+		outProtocolInvoker = &OutProtocolInvoker{
+			resp: protocol.RespProtocolInstance(),
+		}
+	})
+	return outProtocolInvoker
 }
 
 func (o *OutProtocolInvoker) Invoke(ctx context.Context, invocation InvocationInter) result.ResultInter {

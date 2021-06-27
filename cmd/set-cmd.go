@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"redis-like/executor"
+	"redis-like/constant"
 	"redis-like/storage"
 	"strconv"
 	"strings"
@@ -51,8 +51,8 @@ func (s *SetCmd) Deal(ctx context.Context) []byte {
 	storage := storage.StorageInstance()
 	err := storage.Set(context.Background(), s.key, s.value)
 	if err == nil {
-		return executor.OK
+		return constant.OK
 	} else {
-		return executor.CommonErr
+		return constant.CommonErr
 	}
 }

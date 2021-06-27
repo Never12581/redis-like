@@ -1,12 +1,9 @@
-package executor
+package constant
 
 import "errors"
 
 const (
 	NoResultError = "no result error."
-
-	ParamsGetError      = "source params get error!"
-	ParamsAnalysisError = "source params analysis error！"
 )
 
 var (
@@ -21,4 +18,6 @@ var (
 
 var (
 	UnsupportedCommandErr = errors.New("unsupported command error")
+	ParamsGetError        = errors.New("source params get error!")
+	ParamsAnalysisError   = errors.New("source params analysis error！")
 )

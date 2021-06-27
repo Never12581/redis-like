@@ -2,7 +2,7 @@ package invoker
 
 import (
 	"context"
-	"redis-like/executor/cmd"
+	"redis-like/cmd"
 	"redis-like/executor/result"
 	"sync"
 )
@@ -29,13 +29,8 @@ func (s *StorageInvoker) SetNext(inter InvokerInter) {
 }
 
 func (s *StorageInvoker) Invoke(ctx context.Context, invocation InvocationInter) result.ResultInter {
-	executeMethod := invocation.GetAttachment(ExecuteMethod).(string)
-	analysisParams := invocation.GetAttachment(AnalysisParams).([][]byte)
-	c, err := cmd.GeneratorCmd(executeMethod, analysisParams)
-	if err != nil {
-		return result.ErrorResult(err)
-	}
-	bs := c.Deal(ctx)
+	cmd := invocation.GetAttachment(ExecuteCmd).(cmd.Cmd)
+	bs := cmd.Deal(ctx)
 	invocation.PutAttachment(SourceResult, bs)
 	return result.SuccessResult(bs)
 }
