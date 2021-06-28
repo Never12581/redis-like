@@ -1,14 +1,15 @@
-package main
+package tcp
 
 import (
 	"fmt"
 	"io/ioutil"
 	"net"
 	"strconv"
+	"testing"
 	"time"
 )
 
-func main() {
+func TestTcpClient(t *testing.T) {
 	for i := 0; i < 1; i++ {
 		go call(i)
 	}

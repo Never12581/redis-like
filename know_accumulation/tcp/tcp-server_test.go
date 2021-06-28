@@ -1,4 +1,4 @@
-package main
+package tcp
 
 import (
 	"fmt"
@@ -6,9 +6,10 @@ import (
 	"io"
 	"net"
 	"strings"
+	"testing"
 )
 
-func main() {
+func TestTcpServer(t *testing.T) {
 	l, err := net.Listen("tcp", "127.0.0.1:8000")
 	if err != nil {
 		panic(err)
