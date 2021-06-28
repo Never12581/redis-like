@@ -3,8 +3,8 @@ package invoker
 import (
 	"context"
 	"redis-like/constant"
+	"redis-like/executor/protocol"
 	"redis-like/executor/result"
-	"redis-like/protocol"
 	"sync"
 )
 
@@ -19,7 +19,7 @@ type InProtocolInvoker struct {
 	resp        *protocol.RespProtocol
 }
 
-func ProtocolInvokerInstance() *InProtocolInvoker {
+func InProtocolInvokerInstance() *InProtocolInvoker {
 	protocolOnce.Do(func() {
 		protocolInvoker = &InProtocolInvoker{
 			resp: protocol.RespProtocolInstance(),

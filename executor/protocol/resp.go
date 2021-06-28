@@ -4,6 +4,7 @@ import (
 	"redis-like/cmd"
 	"redis-like/constant"
 	"redis-like/executor/result"
+	"regexp"
 	"strconv"
 	"sync"
 )
@@ -39,10 +40,52 @@ func (r *RespProtocol) UnPacket(bs []byte) (cmd.Cmd, error) {
 	return cmd.GeneratorCmd(executeMethod, analysisParams)
 }
 
-func (r *RespProtocol) Packet(result result.ResultInter) []byte {
+func (r *RespProtocol) Packet(rr result.ResultInter) result.ResultInter {
+	rbss := make([][]byte, 0)
+	if !rr.Success() {
+		bs := []byte(rr.Error().Error())
+		rbs := make([]byte, 0)
+		rbs = append(rbs, '-')
+		rbs = append(rbs, bs...)
+		rbs = append(rbs, '\r', '\n')
+		rbss = append(rbss, []byte{'-'}, bs, []byte{'\r', '\n'})
+		r := result.SuccessAndErrorResult(rbss, rr.Error())
+		return r
+	}
+	bss := rr.Result()
+	if len(bss) == 1 {
+		bs := bss[0]
+		// 批量字符串
+		if bs == nil {
+			rbss = append(rbss, []byte{'$', '-', '1', '\r', '\n'})
+			return result.SuccessResult(rbss)
+		}
+		if len(bs) == 0 {
+			rbss = append(rbss, []byte{'$', '0', '\r', '\n', '\r', '\n'})
+			return result.SuccessResult(rbss)
+		}
+		// 数字情况
+		if isInt(string(bs)) {
+			rbs := make([]byte, 0)
+			rbs = append(rbs, ':')
+			rbs = append(rbs, bs...)
+			rbs = append(rbs, '\r', '\n')
+			rbss = append(rbss, rbs)
+			return result.SuccessResult(rbss)
+		}
+		// 均以简单字符串处理
+		rbs := make([]byte, 0)
+		rbs = append(rbs, '+')
+		rbs = append(rbs, bs...)
+		rbs = append(rbs, '\r', '\n')
+		rbss = append(rbss, rbs)
+		return result.SuccessResult(rbss)
+	}
+	panic("unsupported resp array analysis!")
 	return nil
 }
 
+// start -------------------------------------------- unPacket 辅助方法
 // 通用解析 ---> 解析为 [][]byte
 func commonRespProtocolAnalysis(bs []byte) ([][]byte, error) {
 	bsLength := len(bs)
@@ -100,3 +143,14 @@ func findByteIndex(bs []byte, start, end int, startByte, endByte byte) int {
 	}
 	return -1
 }
+
+// end -------------------------------------------- unPacket 辅助方法
+
+// start -------------------------------------------- packet 辅助方法
+// 判断是否为整数
+func isInt(s string) bool {
+	match, _ := regexp.MatchString(`^[\+-]?\d+$`, s)
+	return match
+}
+
+// end -------------------------------------------- packet 辅助方法

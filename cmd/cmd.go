@@ -3,11 +3,12 @@ package cmd
 import (
 	"context"
 	"redis-like/constant"
+	"redis-like/executor/result"
 )
 
 type Cmd interface {
 	Init(bs [][]byte) error
-	Deal(ctx context.Context) []byte
+	Deal(ctx context.Context) result.ResultInter
 }
 
 type initFunc func() Cmd

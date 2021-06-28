@@ -7,13 +7,13 @@ const (
 )
 
 var (
-	RequestErr      = []byte("-CommonErr request .")
-	RequestStartErr = []byte("-CommonErr request not start with * .")
-	Pong            = []byte("+Pong")
-	OK              = []byte("+OK")
-	CommonErr       = []byte("-cannot deal error .")
-	UnsupportedErr  = []byte("-the func unsupported .")
-	NotFoundErr     = []byte("-the key not found .")
+	RequestErr      = []byte("CommonErr request .")
+	RequestStartErr = []byte("CommonErr request not start with * .")
+	Pong            = []byte("Pong")
+	OK              = []byte("OK")
+	CommonErr       = []byte("cannot deal error .")
+	UnsupportedErr  = []byte("the func unsupported .")
+	NotFoundErr     = []byte("the key not found .")
 )
 
 var (

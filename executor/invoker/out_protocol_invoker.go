@@ -2,8 +2,8 @@ package invoker
 
 import (
 	"context"
+	"redis-like/executor/protocol"
 	"redis-like/executor/result"
-	"redis-like/protocol"
 	"sync"
 )
 
@@ -27,7 +27,8 @@ func OutProtocolInvokerInstance() *OutProtocolInvoker {
 }
 
 func (o *OutProtocolInvoker) Invoke(ctx context.Context, invocation InvocationInter) result.ResultInter {
-	return nil
+	resultInter := invocation.GetAttachment(SourceResult).(result.ResultInter)
+	return o.resp.Packet(resultInter)
 }
 
 func (o *OutProtocolInvoker) Callback() CallBackFunc {
@@ -39,7 +40,7 @@ func (o *OutProtocolInvoker) SetNext(inter InvokerInter) {
 }
 
 func (o *OutProtocolInvoker) HasNext() bool {
-	return o.nextInvoker == nil
+	return o.nextInvoker != nil
 }
 
 func (o *OutProtocolInvoker) Next() InvokerInter {

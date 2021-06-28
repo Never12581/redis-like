@@ -30,9 +30,9 @@ func (s *StorageInvoker) SetNext(inter InvokerInter) {
 
 func (s *StorageInvoker) Invoke(ctx context.Context, invocation InvocationInter) result.ResultInter {
 	cmd := invocation.GetAttachment(ExecuteCmd).(cmd.Cmd)
-	bs := cmd.Deal(ctx)
-	invocation.PutAttachment(SourceResult, bs)
-	return result.SuccessResult(bs)
+	r := cmd.Deal(ctx)
+	invocation.PutAttachment(SourceResult, r)
+	return r
 }
 
 func (s *StorageInvoker) Callback() CallBackFunc {
