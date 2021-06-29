@@ -33,7 +33,6 @@ func (s *RedisExample) OnMessage(c *connection.Connection, ctx interface{}, data
 
 func (s *RedisExample) OnClose(c *connection.Connection) {
 	log.Println("OnClose ：", c.PeerAddr())
-	log.Println("============")
 }
 
 func (s *RedisExample) UnPacket(c *connection.Connection, buffer *ringbuffer.RingBuffer) (interface{}, []byte) {
@@ -43,7 +42,7 @@ func (s *RedisExample) UnPacket(c *connection.Connection, buffer *ringbuffer.Rin
 }
 
 func (s *RedisExample) Packet(c *connection.Connection, data []byte) []byte {
-	return append(data, []byte("\r\n")...)
+	return data
 }
 
 func Start() (server *gev.Server) {
