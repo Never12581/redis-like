@@ -81,8 +81,8 @@ func (r *RespProtocol) Packet(rr result.ResultInter) result.ResultInter {
 		rbss = append(rbss, rbs)
 		return result.SuccessResult(rbss)
 	}
+	// fixme : 数组类型解析，等到返回数组后
 	panic("unsupported resp array analysis!")
-	return nil
 }
 
 // start -------------------------------------------- unPacket 辅助方法

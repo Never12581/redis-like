@@ -14,6 +14,7 @@ import (
 )
 
 type RedisExample struct {
+	exec execute.Executor
 }
 
 func (s *RedisExample) OnConnect(c *connection.Connection) {
@@ -23,12 +24,11 @@ func (s *RedisExample) OnMessage(c *connection.Connection, ctx interface{}, data
 	d := time.Now().Add(1000 * time.Millisecond)
 	cctx, closeFunc := context.WithDeadline(context.Background(), d)
 	defer closeFunc()
-	e := execute.ExecutorInstance()
 
 	invocation := invoker.NewInvocation()
 	invocation.PutAttachment(invoker.RequestParams, data)
 
-	return e.Execute(cctx, invocation)
+	return s.exec.Execute(cctx, invocation)
 }
 
 func (s *RedisExample) OnClose(c *connection.Connection) {
@@ -47,7 +47,7 @@ func (s *RedisExample) Packet(c *connection.Connection, data []byte) []byte {
 
 func Start() (server *gev.Server) {
 
-	handler := &RedisExample{}
+	handler := &RedisExample{exec: execute.ExecutorInstance()}
 
 	var port int
 	var loops int
