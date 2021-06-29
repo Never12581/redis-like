@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"context"
+	"redis-like/constant"
+	"redis-like/executor/result"
 	"redis-like/storage"
 )
 
@@ -16,13 +18,16 @@ func (a *AppendCmd) Init(bs [][]byte) error {
 	return nil
 }
 
-func (a *AppendCmd) Deal(ctx context.Context) []byte {
+func (a *AppendCmd) Deal(ctx context.Context) result.ResultInter {
 	storage := storage.StorageInstance()
 	err := storage.Append(context.Background(), a.key, a.val)
+	var r result.ResultInter
 	if err == nil {
-		out := OK
-		return out
+		bss := make([][]byte, 0)
+		bss = append(bss, constant.OK)
+		r = result.SuccessResult(bss)
 	} else {
-		return CommonErr
+		r = result.ErrorResult(err)
 	}
+	return r
 }

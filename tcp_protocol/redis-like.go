@@ -1,4 +1,4 @@
-package protocol
+package tcp_protocol
 
 import (
 	"context"
@@ -7,13 +7,14 @@ import (
 	"github.com/Allenxuxu/gev/connection"
 	"github.com/Allenxuxu/ringbuffer"
 	"log"
-	"redis-like/executor/executor"
+	"redis-like/executor/execute"
 	"redis-like/executor/invoker"
 	"strconv"
 	"time"
 )
 
 type RedisExample struct {
+	exec execute.Executor
 }
 
 func (s *RedisExample) OnConnect(c *connection.Connection) {
@@ -23,17 +24,15 @@ func (s *RedisExample) OnMessage(c *connection.Connection, ctx interface{}, data
 	d := time.Now().Add(1000 * time.Millisecond)
 	cctx, closeFunc := context.WithDeadline(context.Background(), d)
 	defer closeFunc()
-	e := executor.ExecutorInstance()
 
 	invocation := invoker.NewInvocation()
 	invocation.PutAttachment(invoker.RequestParams, data)
 
-	return e.Execute(cctx, invocation)
+	return s.exec.Execute(cctx, invocation)
 }
 
 func (s *RedisExample) OnClose(c *connection.Connection) {
 	log.Println("OnClose ：", c.PeerAddr())
-	log.Println("============")
 }
 
 func (s *RedisExample) UnPacket(c *connection.Connection, buffer *ringbuffer.RingBuffer) (interface{}, []byte) {
@@ -43,12 +42,12 @@ func (s *RedisExample) UnPacket(c *connection.Connection, buffer *ringbuffer.Rin
 }
 
 func (s *RedisExample) Packet(c *connection.Connection, data []byte) []byte {
-	return append(data, []byte("\r\n")...)
+	return data
 }
 
 func Start() (server *gev.Server) {
 
-	handler := &RedisExample{}
+	handler := &RedisExample{exec: execute.ExecutorInstance()}
 
 	var port int
 	var loops int

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"redis-like/executor/result"
 	"redis-like/storage"
 )
 
@@ -14,14 +15,16 @@ func (g *GetCmd) Init(bs [][]byte) error {
 	return nil
 }
 
-func (g *GetCmd) Deal(ctx context.Context) []byte {
+func (g *GetCmd) Deal(ctx context.Context) result.ResultInter {
 	storage := storage.StorageInstance()
 	bs, err := storage.Get(ctx, g.key)
+	var r result.ResultInter
 	if err == nil {
-		out := []byte("+")
-		out = append(out, bs...)
-		return out
+		bss := make([][]byte, 0)
+		bss = append(bss, bs)
+		r = result.SuccessResult(bss)
 	} else {
-		return NotFoundErr
+		r = result.ErrorResult(err)
 	}
+	return r
 }

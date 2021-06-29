@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"context"
+	"redis-like/constant"
+	"redis-like/executor/result"
 	"redis-like/storage"
 	"strconv"
 	"strings"
@@ -46,12 +48,16 @@ func (s *SetCmd) Init(bs [][]byte) error {
 	return nil
 }
 
-func (s *SetCmd) Deal(ctx context.Context) []byte {
+func (s *SetCmd) Deal(ctx context.Context) result.ResultInter {
 	storage := storage.StorageInstance()
 	err := storage.Set(context.Background(), s.key, s.value)
+	var r result.ResultInter
 	if err == nil {
-		return OK
+		bss := make([][]byte, 0)
+		bss = append(bss, constant.OK)
+		r = result.SuccessResult(bss)
 	} else {
-		return CommonErr
+		r = result.ErrorResult(err)
 	}
+	return r
 }
