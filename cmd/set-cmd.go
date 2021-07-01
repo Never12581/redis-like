@@ -13,9 +13,9 @@ type SetCmd struct {
 	key   []byte
 	value []byte
 	ex    bool
-	exTtl int64
+	exAt  int64
 	px    bool
-	pxTtl int64
+	pxAt  int64
 	nx    bool
 	xx    bool
 }
@@ -31,14 +31,14 @@ func (s *SetCmd) Init(bs [][]byte) error {
 				return err
 			}
 			s.ex = true
-			s.exTtl = ttl
+			s.exAt = ttl
 		} else if strings.Compare(temp, "px") == 0 {
 			ttl, err := strconv.ParseInt(string(bs[i+1]), 10, 64)
 			if err != nil {
 				return err
 			}
 			s.px = true
-			s.pxTtl = ttl
+			s.pxAt = ttl
 		} else if strings.Compare(temp, "nx") == 0 {
 			s.nx = true
 		} else if strings.Compare(temp, "xx") == 0 {
