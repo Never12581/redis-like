@@ -1,3 +1,10 @@
+package cmd
+
+import (
+	"context"
+	"redis-like/executor/result"
+	"redis-like/storage"
+)
 
 
 type Getex struct {
