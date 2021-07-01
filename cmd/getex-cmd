@@ -1,0 +1,6 @@
+
+
+type Getex struct {
+  ex []byte
+  val []byte
+}
