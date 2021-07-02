@@ -22,6 +22,8 @@ func init() {
 	routeInfo["set"] = setCmdInit
 	routeInfo["append"] = appendCmdInit
 	routeInfo["del"] = delCmdInit
+	routeInfo["getdel"] = getDelCmdInit
+	routeInfo["getex"] = getExCmdInit
 }
 
 func delCmdInit() Cmd {
@@ -42,6 +44,14 @@ func getCmdInit() Cmd {
 
 func pingCmdInit() Cmd {
 	return new(PingCmd)
+}
+
+func getExCmdInit() Cmd {
+	return new(GetExCmd)
+}
+
+func getDelCmdInit() Cmd {
+	return new(GetDelCmd)
 }
 
 func GeneratorCmd(executeMethod string, analysisParams [][]byte) (Cmd, error) {
