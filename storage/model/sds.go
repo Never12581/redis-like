@@ -2,7 +2,7 @@ package model
 
 import "errors"
 
-// Sds 模拟redis 数据结构，golang中对[]byte 已有足够优化，故不做其他处理
+// Sds 模拟redis 数据结构，golang中对[]byte 已有足够优化，故不做其他处理；没有原生字节数组效率高
 type Sds struct {
 	buf []byte
 }
