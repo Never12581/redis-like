@@ -1,27 +1,37 @@
 package model
 
-import (
-	"fmt"
-	"strings"
-)
-
-type Lister interface {
-	Size() int64
-	ListFirst() *ListNode
-	ListLast() *ListNode
-	AddNodeHead(value interface{})
-	AddNodeTail(value interface{})
-	AddNodeIndex(value interface{}, index int, after bool)
-	DelNode(node *ListNode)
-	Iterator() *ListIter
-	SearchKey(key interface{}) *ListNode
-	SearchIndex(index int64) *ListNode
+type ListNoder interface {
+	Prev() ListNoder
+	Next() ListNoder
+	Value() interface{}
+	SetPrev(noder ListNoder)
+	SetNext(noder ListNoder)
 }
 
 type ListNode struct {
-	prev  *ListNode
-	next  *ListNode
+	prev  ListNoder
+	next  ListNoder
 	value interface{}
+}
+
+func (l *ListNode) SetPrev(noder ListNoder) {
+	l.prev = noder
+}
+
+func (l *ListNode) SetNext(noder ListNoder) {
+	l.next = noder
+}
+
+func (l *ListNode) Prev() ListNoder {
+	return l.prev
+}
+
+func (l *ListNode) Next() ListNoder {
+	return l.next
+}
+
+func (l *ListNode) Value() interface{} {
+	return l.value
 }
 
 func newListNode(value interface{}) *ListNode {
@@ -30,27 +40,41 @@ func newListNode(value interface{}) *ListNode {
 	return l
 }
 
+// todo 暂时不实现
 type ListIter struct {
-	next      *ListNode
+	next      ListNoder
 	direction int64
 }
 
+type Lister interface {
+	Size() int64
+	ListFirst() ListNoder
+	ListLast() ListNoder
+	AddNodeHead(value interface{})
+	AddNodeTail(value interface{})
+	AddNodeIndex(value interface{}, index int, after bool)
+	DelNode(node ListNoder)
+	Iterator() *ListIter
+	SearchKey(key interface{}) ListNoder
+	SearchIndex(index int64) ListNoder
+}
+
 type List struct {
-	head  *ListNode
-	tail  *ListNode
+	head  ListNoder
+	tail  ListNoder
 	len   int64
-	match func(n1, n2 *ListNode) bool
+	match func(n1, n2 interface{}) bool
 }
 
 func (l *List) Size() int64 {
 	return l.len
 }
 
-func (l *List) ListFirst() *ListNode {
+func (l *List) ListFirst() ListNoder {
 	return l.head
 }
 
-func (l *List) ListLast() *ListNode {
+func (l *List) ListLast() ListNoder {
 	return l.tail
 }
 
@@ -61,7 +85,7 @@ func (l *List) AddNodeHead(value interface{}) {
 		l.tail = node
 	} else {
 		node.next = l.head
-		l.head.prev = node
+		l.head.SetPrev(node)
 		l.head = node
 	}
 	l.len++
@@ -74,7 +98,7 @@ func (l *List) AddNodeTail(value interface{}) {
 		l.tail = node
 	} else {
 		node.prev = l.tail
-		l.tail.next = node
+		l.tail.SetNext(node)
 		l.tail = node
 	}
 	l.len++
@@ -84,37 +108,59 @@ func (l *List) AddNodeIndex(value interface{}, index int, after bool) {
 	insertNode := newListNode(value)
 	currentNode := l.SearchIndex(int64(index))
 	if after {
-		insertNode.prev = currentNode
-		insertNode.next = currentNode.next
+		insertNode.SetPrev(currentNode)
+		insertNode.SetNext(currentNode.Next())
 		if l.tail == currentNode {
 			l.tail = insertNode
 		}
 	} else {
 		insertNode.next = currentNode
-		insertNode.prev = currentNode.prev
+		insertNode.prev = currentNode.Next()
 		if l.head == currentNode {
 			l.head = insertNode
 		}
 	}
 	if insertNode.prev != nil {
-		insertNode.prev.next = insertNode
+		insertNode.prev.SetNext(insertNode)
 	}
 	if insertNode.next != nil {
-		insertNode.next.prev = insertNode
+		insertNode.next.SetPrev(insertNode)
 	}
 	l.len++
 }
 
-func (l *List) DelNode(node *ListNode) {
-	panic("implement me")
+func (l *List) DelNode(node ListNoder) {
+	if node.Prev() != nil {
+		node.Prev().SetNext(node.Next())
+	} else {
+		l.head = node.Next()
+	}
+	if node.Next() != nil {
+		node.Next().SetPrev(node.Next())
+	} else {
+		l.tail = node.Prev()
+	}
+	l.len--
 }
 
 func (l *List) Iterator() *ListIter {
-	panic("implement me")
+	iter := new(ListIter)
+	iter.next = l.head
+	iter.direction = 0
+	return iter
 }
 
-func (l *List) SearchKey(key interface{}) *ListNode {
-	panic("implement me")
+func (l *List) SearchKey(key interface{}) ListNoder {
+	node := l.head
+	var resultNode ListNoder
+	for {
+		if l.match(node.Value(), key) {
+			resultNode = node
+			break
+		}
+		node = node.Next()
+	}
+	return resultNode
 }
 
 /* Return the element at the specified zero-based index
@@ -122,7 +168,7 @@ func (l *List) SearchKey(key interface{}) *ListNode {
  * and so on. Negative integers are used in order to count
  * from the tail, -1 is the last element, -2 the penultimate
  * and so on. If the index is out of range NULL is returned. */
-func (l *List) SearchIndex(index int64) *ListNode {
+func (l *List) SearchIndex(index int64) ListNoder {
 	if index < 0 {
 		tempIndex := -(index)
 		if tempIndex > l.len {
@@ -130,33 +176,20 @@ func (l *List) SearchIndex(index int64) *ListNode {
 		}
 	}
 
-	var node *ListNode
+	var node ListNoder
 	if index < 0 {
 		index = -(index) - 1
 		node = l.tail
 		for index > 0 && node != nil {
 			index--
-			node = node.prev
+			node = node.Prev()
 		}
 	} else {
 		node = l.head
 		for index > 0 && node != nil {
 			index--
-			node = node.next
+			node = node.Next()
 		}
 	}
 	return node
-}
-
-func (l *List) ToString() string {
-	format := `len:%v`
-	s := fmt.Sprintf(format, l.len)
-	sb := strings.Builder{}
-	sb.WriteString(s)
-	node := l.head
-	for node != nil {
-		sb.WriteString(",")
-		sb.WriteString((node.value).(string))
-	}
-	return sb.String()
 }
