@@ -83,3 +83,9 @@
 ### issue3
 
 - [x] 编写resp协议解析器，将协议解析能力内聚
+
+### issue4
+- [ ] 完成redis原生命令支持（长期）
+
+### issue5
+- [ ] 完成redis原生数据结构（golang实现）
