@@ -5,7 +5,6 @@ import (
 	"golang.org/x/sys/unix"
 	"io"
 	"net"
-	"strings"
 	"testing"
 )
 
@@ -36,10 +35,9 @@ func TestTcpServer(t *testing.T) {
 }
 
 func handler(conn *net.TCPConn) {
-	defer conn.Close()
+	//defer conn.Close()
 	buf := make([]byte, 1024)
 	//给客户端发送连接成功的信号
-	conn.Write([]byte("welcome to my server\n"))
 	for {
 		//持续读取客户端数据，保存在buf缓冲区中，并处理
 		n, err := conn.Read(buf)
@@ -52,6 +50,6 @@ func handler(conn *net.TCPConn) {
 			return
 		}
 		//这里是处理数据的一个示范，把客户端发来的数据全部转化为大写
-		conn.Write([]byte(strings.ToUpper(string(buf[:n]))))
+		conn.Write([]byte("+OK\r\n"))
 	}
 }
