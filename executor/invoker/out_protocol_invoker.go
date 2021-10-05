@@ -13,7 +13,7 @@ var (
 )
 
 type OutProtocolInvoker struct {
-	nextInvoker InvokerInter
+	nextInvoker Invoker
 	resp        *protocol.RespProtocol
 }
 
@@ -35,7 +35,7 @@ func (o *OutProtocolInvoker) Callback() CallBackFunc {
 	return nil
 }
 
-func (o *OutProtocolInvoker) SetNext(inter InvokerInter) {
+func (o *OutProtocolInvoker) SetNext(inter Invoker) {
 	o.nextInvoker = inter
 }
 
@@ -43,6 +43,6 @@ func (o *OutProtocolInvoker) HasNext() bool {
 	return o.nextInvoker != nil
 }
 
-func (o *OutProtocolInvoker) Next() InvokerInter {
+func (o *OutProtocolInvoker) Next() Invoker {
 	return o.nextInvoker
 }

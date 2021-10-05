@@ -14,7 +14,7 @@ var (
 
 // StorageInvoker 存储demo
 type StorageInvoker struct {
-	nextInvoker InvokerInter
+	nextInvoker Invoker
 }
 
 func StorageInvokerInstance() *StorageInvoker {
@@ -24,7 +24,7 @@ func StorageInvokerInstance() *StorageInvoker {
 	return storageInvoker
 }
 
-func (s *StorageInvoker) SetNext(inter InvokerInter) {
+func (s *StorageInvoker) SetNext(inter Invoker) {
 	s.nextInvoker = inter
 }
 
@@ -43,6 +43,6 @@ func (s *StorageInvoker) HasNext() bool {
 	return s.nextInvoker != nil
 }
 
-func (s *StorageInvoker) Next() InvokerInter {
+func (s *StorageInvoker) Next() Invoker {
 	return s.nextInvoker
 }

@@ -6,22 +6,23 @@ import (
 )
 
 const (
-	// 原始参数
+	// RequestParams 原始参数
 	RequestParams = "requestParams"
-	// 解析后参数
+	// AnalysisParams 解析后参数
 	AnalysisParams = "analysisParams"
-	// 执行方法
+	// ExecuteMethod 执行方法
 	ExecuteMethod = "executeMethod"
-	// 原始返回值
+	// SourceResult 原始返回值
 	SourceResult = "sourceResult"
-	// 执行方法对象
+	// ExecuteCmd 执行方法对象
 	ExecuteCmd = "executeCmd"
 )
 
-type InvokerInter interface {
+//Invoker 执行核心类
+type Invoker interface {
 	Invoke(ctx context.Context, invocation InvocationInter) result.ResultInter
 	Callback() CallBackFunc
-	SetNext(inter InvokerInter)
+	SetNext(inter Invoker)
 	HasNext() bool
-	Next() InvokerInter
+	Next() Invoker
 }

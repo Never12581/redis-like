@@ -15,7 +15,7 @@ var (
 
 // InProtocolInvoker 协议处理invoker
 type InProtocolInvoker struct {
-	nextInvoker InvokerInter
+	nextInvoker Invoker
 	resp        *protocol.RespProtocol
 }
 
@@ -28,7 +28,7 @@ func InProtocolInvokerInstance() *InProtocolInvoker {
 	return protocolInvoker
 }
 
-func (p *InProtocolInvoker) SetNext(inter InvokerInter) {
+func (p *InProtocolInvoker) SetNext(inter Invoker) {
 	p.nextInvoker = inter
 }
 
@@ -57,6 +57,6 @@ func (s *InProtocolInvoker) HasNext() bool {
 	return s.nextInvoker != nil
 }
 
-func (s *InProtocolInvoker) Next() InvokerInter {
+func (s *InProtocolInvoker) Next() Invoker {
 	return s.nextInvoker
 }

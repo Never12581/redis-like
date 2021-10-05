@@ -32,14 +32,14 @@ func ExecutorInstance() Executor {
 
 type Executor interface {
 	Execute(ctx context.Context, invocation invoker.InvocationInter) []byte
-	SetInvoker(inter invoker.InvokerInter)
+	SetInvoker(inter invoker.Invoker)
 }
 
 type SimpleExecutor struct {
-	invoker invoker.InvokerInter
+	invoker invoker.Invoker
 }
 
-func (s *SimpleExecutor) SetInvoker(inter invoker.InvokerInter) {
+func (s *SimpleExecutor) SetInvoker(inter invoker.Invoker) {
 	s.invoker = inter
 }
 
